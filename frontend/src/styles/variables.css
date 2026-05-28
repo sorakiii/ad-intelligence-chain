@@ -1,0 +1,52 @@
+/**
+ * @file 全局CSS变量定义
+ */
+
+:root {
+  --primary-color: #0066FF;
+  --primary-dark: #0052CC;
+  --bg-color: #FAFAFA;
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --border-color: #E5E5E5;
+  --gradient-primary: linear-gradient(135deg, #0066FF 0%, #0052CC 100%);
+  --gradient-light: linear-gradient(135deg, #F8F9FF 0%, #FFFFFF 100%);
+}
+
+/* 添加动画关键帧 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 添加深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1A1A1A;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0A0;
+    --border-color: #333333;
+    --card-bg: #242424;
+    --hover-bg: #2A2A2A;
+  }
+}
+
+/* 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.el-dialog.preview-dialog {
+  --el-dialog-margin-top: 6vh !important;
+} 

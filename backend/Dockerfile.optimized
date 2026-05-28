@@ -1,0 +1,130 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TZ=Asia/Shanghai \
+    DEBIAN_FRONTEND=noninteractive
+
+# 设置时区
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN chmod 1777 /tmp
+
+# 替换 APT 源为中国科技大学源 (使用 Debian 12 Bookworm)
+RUN rm -f /etc/apt/sources.list \
+    && echo "deb http://mirrors.ustc.edu.cn/debian/ bookworm main non-free contrib" > /etc/apt/sources.list \
+    && echo "deb-src http://mirrors.ustc.edu.cn/debian/ bookworm main non-free contrib" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.ustc.edu.cn/debian-security bookworm-security main" >> /etc/apt/sources.list \
+    && echo "deb-src http://mirrors.ustc.edu.cn/debian-security bookworm-security main" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.ustc.edu.cn/debian bookworm-updates main non-free contrib" >> /etc/apt/sources.list \
+    && echo "deb-src http://mirrors.ustc.edu.cn/debian bookworm-updates main non-free contrib" >> /etc/apt/sources.list
+
+# 配置 pip 使用中国清华大学源
+RUN mkdir -p ~/.pip \
+    && echo "[global]" > ~/.pip/pip.conf \
+    && echo "index-url = https://pypi.mirrors.ustc.edu.cn/simple" >> ~/.pip/pip.conf \
+    && echo "trusted-host = pypi.mirrors.ustc.edu.cn pypi.org files.pythonhosted.org" >> ~/.pip/pip.conf
+
+# 安装基础系统依赖 - 分批安装以减少内存使用
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    curl \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libxml2 \
+    libxslt1.1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libjpeg62-turbo \
+    libpng16-16 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 安装核心图形库 - 分批安装
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libcairo2 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libgdk-pixbuf2.0-0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libharfbuzz0b \
+    libfribidi0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 安装 Pango 相关库 - 关键步骤
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libpango-1.0-0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libpangocairo-1.0-0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 安装字体 - 分批安装以减少内存使用
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    fonts-liberation \
+    fonts-dejavu \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    fonts-noto-cjk \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 安装 Chromium
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+COPY app/requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "run.py"] 

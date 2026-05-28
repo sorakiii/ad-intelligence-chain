@@ -1,0 +1,10 @@
+FROM node:20
+
+WORKDIR /app
+
+# 安装依赖
+COPY package*.json ./
+RUN npm install
+
+# 开发环境不复制代码，使用 volume 挂载
+CMD ["npm", "run", "dev"]

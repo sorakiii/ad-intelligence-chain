@@ -1,0 +1,2 @@
+export const APP_VERSION = '2026.05.28.1440';
+export const BUILD_TIME = '2026-05-28T06:40:35.113Z';

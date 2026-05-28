@@ -1,0 +1,166 @@
+version: "3"
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        VITE_API_URL: ""
+        BUILD_VERSION: ${BUILD_VERSION:-}
+        BUILD_DATE: ${BUILD_DATE:-}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /mnt/docker-nginx/nginx/ssl:/etc/nginx/ssl
+      - /mnt/docker-nginx/icon:/usr/share/nginx/html/icon:ro
+    depends_on:
+      - backend
+    links:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_ENV=production
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  # 主要的Celery Worker - 处理默认队列
+  celery_worker:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: celery -A celery_worker.celery worker --loglevel=info --concurrency=4 --queues=default
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  # HTML生成专用Worker - 处理HTML生成任务
+  celery_worker_html:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: celery -A celery_worker.celery worker --loglevel=info --concurrency=${HTML_WORKER_CONCURRENCY:-4} --queues=html_generation
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+      - HTML_WORKER_CONCURRENCY=${HTML_WORKER_CONCURRENCY:-4}
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  # HTML生成扩展Worker - 高负载时启用
+  celery_worker_html_extra:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: celery -A celery_worker.celery worker --loglevel=info --concurrency=${HTML_EXTRA_CONCURRENCY:-2} --queues=html_generation
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+      - HTML_EXTRA_CONCURRENCY=${HTML_EXTRA_CONCURRENCY:-2}
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+    profiles:
+      - scale
+
+  # 视频处理专用Worker
+  celery_worker_video:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: celery -A celery_worker.celery worker --loglevel=info --concurrency=2 --queues=video_processing
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  # 图像处理专用Worker
+  celery_worker_image:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: celery -A celery_worker.celery worker --loglevel=info --concurrency=2 --queues=image_processing
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  celery_beat:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.optimized
+    volumes:
+      - ./backend:/app
+      - celerybeat-data:/app/celerybeat
+    working_dir: /app
+    command: celery -A celery_worker.celery beat --loglevel=info
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  celerybeat-data:

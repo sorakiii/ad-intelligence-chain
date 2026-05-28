@@ -1,0 +1,72 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TZ=Asia/Shanghai
+
+# 设置时区
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN chmod 1777 /tmp
+
+# 替换 APT 源为中国科技大学源 (使用 Debian 12 Bookworm)
+RUN rm -f /etc/apt/sources.list \
+    && echo "deb http://mirrors.ustc.edu.cn/debian/ bookworm main non-free contrib" > /etc/apt/sources.list \
+    && echo "deb-src http://mirrors.ustc.edu.cn/debian/ bookworm main non-free contrib" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.ustc.edu.cn/debian-security bookworm-security main" >> /etc/apt/sources.list \
+    && echo "deb-src http://mirrors.ustc.edu.cn/debian-security bookworm-security main" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.ustc.edu.cn/debian bookworm-updates main non-free contrib" >> /etc/apt/sources.list \
+    && echo "deb-src http://mirrors.ustc.edu.cn/debian bookworm-updates main non-free contrib" >> /etc/apt/sources.list
+
+# 配置 pip 使用中国清华大学源
+RUN mkdir -p ~/.pip \
+    && echo "[global]" > ~/.pip/pip.conf \
+    && echo "index-url = https://pypi.mirrors.ustc.edu.cn/simple" >> ~/.pip/pip.conf \
+    && echo "trusted-host = pypi.mirrors.ustc.edu.cn pypi.org files.pythonhosted.org" >> ~/.pip/pip.conf
+
+# 安装系统依赖
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    curl \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    libxml2 \
+    libxslt1.1 \
+    libjpeg62-turbo \
+    libpng16-16 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 安装 WeasyPrint 依赖 (Debian 12 版本)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libharfbuzz0b \
+    libfribidi0 \
+    fonts-liberation \
+    fonts-dejavu \
+    fonts-noto-cjk \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
+    fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# 安装 Chromium
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+COPY app/requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "run.py"] 

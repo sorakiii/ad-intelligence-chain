@@ -1,0 +1,138 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3005:3005"
+      - "9229:9229" # Node.js 调试端口
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5002:5002"
+      - "5678:5678" # Python 调试端口
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - FLASK_APP=run:app
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://:foobared@redis:6379/0
+    command: python -m debugpy --listen 0.0.0.0:5678 -m flask run --host=0.0.0.0 --port=5002 --no-reload --debug --exclude-patterns "/usr/local/lib/python3.9/*;*.pyc;__pycache__/*;*.log;logs/*"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  # 主要的Celery Worker - 处理默认队列
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5679:5679" # Celery Worker 调试端口
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_ENV=development
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://:foobared@redis:6379/0
+    command: python -m debugpy --listen 0.0.0.0:5679 -m celery -A celery_worker.celery worker --loglevel=info --concurrency=2 --queues=default
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  # HTML生成专用Worker
+  celery_worker_html:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5680:5680" # HTML Worker 调试端口
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_ENV=development
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://:foobared@redis:6379/0
+    command: python -m debugpy --listen 0.0.0.0:5680 -m celery -A celery_worker.celery worker --loglevel=info --concurrency=1 --queues=html_generation
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  # 视频处理专用Worker
+  celery_worker_video:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5681:5681" # Video Worker 调试端口
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_ENV=development
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://:foobared@redis:6379/0
+    command: python -m debugpy --listen 0.0.0.0:5681 -m celery -A celery_worker.celery worker --loglevel=info --concurrency=1 --queues=video_processing
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+      - celerybeat-data:/app/celerybeat # 持久化存储
+    environment:
+      - FLASK_ENV=development
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://:foobared@redis:6379/0
+    working_dir: /app/celerybeat # 更改工作目录，避免在代码目录生成文件
+    command: celery -A celery_worker.celery beat --loglevel=info
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - app-network
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379"
+    command: redis-server --requirepass foobared
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  celerybeat-data:

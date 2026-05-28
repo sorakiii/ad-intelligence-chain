@@ -1,0 +1,35 @@
+### 变量设置（复制为 test.rest 后本地使用，勿提交含真实密码的文件）
+@baseUrl = http://localhost:5002
+
+### 用户登录
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "phone": "13800000000",
+  "password": "your-password"
+}
+
+### 设置变量
+@access_token = {{login.response.body.data.access_token}}
+
+@branchId = 1
+@roleId = 1
+@fileId = 0
+
+# 用户认证 API
+
+# 获取当前用户信息
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{access_token}}
+
+### 会话管理 API
+
+# 获取会话列表
+GET {{baseUrl}}/api/chat/sessions
+?type=single_role
+&filter=all
+&page=1
+&size=20
+Authorization: Bearer {{access_token}}
