@@ -1,7 +1,7 @@
-# AI 广告平台前端项目文档
+# 心流广告智链前端项目文档
 
 ## 项目概述
-本项目是一个基于 Vue 3 + Vite 构建的现代化广告平台前端系统，采用最新的前端技术栈，提供高效的广告管理和数据分析功能。
+本项目是心流广告智链的前端系统，基于 Vue 3 + Vite 构建，提供 AI 角色协作、广告创意生产、会话管理和数据分析功能。
 
 ## 技术栈
 - **核心框架**: Vue 3
@@ -405,7 +405,7 @@ graph TB
 #### `package.json` - 项目配置
 ```json
 {
-  "name": "ai-ad-platform",
+  "name": "xinliu-ad-intelligence-chain",
   "scripts": {
     "dev": "vite --port 3005",    // 开发服务器端口3005
     "build": "vite build",        // 生产构建
@@ -465,4 +465,4 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 - 项目类型：AI内容生成平台前端
 - 技术栈：Vue 3 + TypeScript + Element Plus
 - 开发端口：3005
-- 主要特性：AI对话、内容生成、多媒体支持 
+- 主要特性：AI对话、内容生成、多媒体支持

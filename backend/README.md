@@ -1,8 +1,8 @@
-# AI 广告平台后端服务
+# 心流广告智链后端服务
 
 ## 项目概述
 
-本项目是一个基于 Flask 的 AI 广告平台后端服务，集成了多种 AI 服务和功能，包括智能对话、视频生成、图像生成、HTML 生成等。采用微服务架构设计，支持异步任务处理和分布式部署。
+本项目是心流广告智链的 Flask 后端服务，集成了多种 AI 服务和功能，包括智能对话、视频生成、图像生成、HTML 生成等。采用微服务架构设计，支持异步任务处理和分布式部署。
 
 ### 核心功能
 
@@ -432,14 +432,14 @@ celery -A celery_worker.celery beat --loglevel=info
 
 ```bash
 # 构建镜像
-docker build -t ai-ad-platform-backend .
+docker build -t xinliu-ad-intelligence-chain-backend .
 
 # 运行容器
 docker run -d \
   --name ai-ad-backend \
   -p 5002:5002 \
   -e FLASK_ENV=production \
-  ai-ad-platform-backend
+  xinliu-ad-intelligence-chain-backend
 
 # 或使用 Docker Compose
 docker-compose up -d

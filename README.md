@@ -1,7 +1,7 @@
-# 心流造物 AI 广告智链
+# 心流广告智链
 
 <p align="center">
-  <img src="./docs/assets/readme-hero.svg" alt="心流造物 AI 广告智链" width="100%" />
+  <img src="./docs/assets/readme-hero.svg" alt="心流广告智链" width="100%" />
 </p>
 
 <p align="center">
@@ -40,7 +40,7 @@
 
 ## 平台介绍
 
-**心流造物 AI 广告智链**是一款面向广告营销场景的 AI 创意与内容生产平台。作为心流造物在广告营销领域的 AI 应用产品，平台以“AI 角色团队”为核心，把需求分析、产品定位、用户洞察、传播策略、文案创作、短视频策划、内容优化和数据复盘等工作，拆解为多个专业智能角色，让广告团队可以像组建一支虚拟广告服务团队一样完成创作与协作。
+**心流广告智链**是一款面向广告营销场景的 AI 创意与内容生产平台。作为心流造物在广告营销领域的 AI 应用产品，平台以“AI 角色团队”为核心，把需求分析、产品定位、用户洞察、传播策略、文案创作、短视频策划、内容优化和数据复盘等工作，拆解为多个专业智能角色，让广告团队可以像组建一支虚拟广告服务团队一样完成创作与协作。
 
 平台不仅提供单角色对话能力，还围绕广告服务流程建设了角色服务、会话历史、文件上传、HTML 页面生成、图像生成、视频生成、Token 用量统计和模块分析等能力。它适合营销团队、品牌方、广告公司、内容团队和创意工作室，用于提升从需求理解到创意交付的效率。
 
@@ -168,7 +168,7 @@ flowchart LR
 
 ![工作流程](./docs/assets/screenshots/15-workflow-pricing.png)
 
-心流造物 AI 广告智链的工作流程包括提交需求、组建战队、协同创作和交付成果，适合对外展示产品服务逻辑。
+心流广告智链的工作流程包括提交需求、组建战队、协同创作和交付成果，适合对外展示产品服务逻辑。
 
 ### 16. 价格方案
 
@@ -229,8 +229,8 @@ flowchart LR
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/sorakiii/ad-intelligence-chain.git
-cd ad-intelligence-chain
+git clone https://github.com/sorakiii/心流广告智链.git
+cd 心流广告智链
 ```
 
 ### 2. 配置后端环境变量
@@ -330,11 +330,11 @@ docker compose up -d --build
 
 ## 项目状态
 
-心流造物 AI 广告智链目前已完成登录体系、单角色服务、智能会话、会话历史、文件上传、产品展示页和数据分析等核心能力，并扩展了 HTML 生成、图像生成和视频生成等多模态创作方向，适合用于广告服务平台展示、产品演示和团队内部 AI 创作协作。
+心流广告智链目前已完成登录体系、单角色服务、智能会话、会话历史、文件上传、产品展示页和数据分析等核心能力，并扩展了 HTML 生成、图像生成和视频生成等多模态创作方向，适合用于广告服务平台展示、产品演示和团队内部 AI 创作协作。
 
 ## English Overview
 
-**Xinliu Creation AI Advertising Intelligence Chain** is an AI-powered advertising creativity and content production platform by Xinliu Creation. It combines role-based AI collaboration, strategy insight, creative generation, conversation management, analytics, and multimodal content workflows.
+**Xinliu Advertising Intelligence Chain** is an AI-powered advertising creativity and content production platform by Xinliu Creation. It combines role-based AI collaboration, strategy insight, creative generation, conversation management, analytics, and multimodal content workflows.
 
 The platform uses specialized AI roles as its core interaction model, allowing users to work with virtual experts for demand analysis, product positioning, user insight, communication strategy, copywriting, short-video planning, content optimization, and usage review.
 
