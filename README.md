@@ -229,8 +229,8 @@ flowchart LR
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/sorakiii/心流广告智链.git
-cd 心流广告智链
+git clone https://github.com/sorakiii/xinliu-ad-intelligence-chain.git
+cd xinliu-ad-intelligence-chain
 ```
 
 ### 2. 配置后端环境变量
