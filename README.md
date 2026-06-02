@@ -128,17 +128,17 @@ flowchart LR
 
 平台会保存单角色会话历史，支持查看历史对话、分页浏览、继续沟通、复制内容和上传文件，让创作过程可追踪、可复用。
 
-### 9. Token 用量排名
+### 9. 数据分析总览
 
-![Token 用量排名](./docs/assets/screenshots/09-token-ranking.png)
+![数据分析总览](./docs/assets/screenshots/09-analytics-overview.png)
+
+数据分析总览展示平台使用概况、模块分布和运营数据入口，帮助团队快速理解平台整体使用情况。
+
+### 10. Token 用量排名
+
+![Token 用量排名](./docs/assets/screenshots/10-token-ranking.png)
 
 数据分析模块展示用户 Token 用量排名，帮助运营者了解平台资源消耗和高频使用成员。
-
-### 10. 日期时间筛选
-
-![日期时间筛选](./docs/assets/screenshots/10-date-filter.png)
-
-数据分析支持按时间范围筛选，便于查看不同周期内的使用趋势和统计结果。
 
 ### 11. 图表分析
 
@@ -175,6 +175,12 @@ flowchart LR
 ![价格方案](./docs/assets/screenshots/16-pricing-plan.png)
 
 价格方案页面用于展示不同规模团队的服务套餐，也支持定制化方案沟通。
+
+### 17. 关于我们
+
+![关于我们](./docs/assets/screenshots/17-about-us.png)
+
+关于我们页面用于展示心流造物的公司介绍、产品理念和服务方向，方便对外呈现品牌背景。
 
 ## 适用场景
 
